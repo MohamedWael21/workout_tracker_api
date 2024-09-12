@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { createAccessToken, createRefreshToken } from "./jwt";
-import { ZodError } from "zod";
+import { ZodError, ZodObject, ZodRawShape, ZodSchema } from "zod";
 import createHttpError from "http-errors";
 export const catchAsyncError = (handleFunc: AsyncRequestHandler) => (req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
   Promise.resolve(handleFunc(req, res, next)).catch(next);
@@ -81,4 +81,23 @@ export function createValidationError(error: ZodError) {
   const validationError = createHttpError(422, "Validation Error", { headers: messages });
 
   return validationError;
+}
+
+export function createValidationMiddleware(validationSchema: ZodSchema) {
+  return catchAsyncError(async (req, _, next) => {
+    const result = validationSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return next(createValidationError(result.error));
+    }
+
+    req.body = result.data;
+    next();
+  });
+}
+
+export function makeSchemaOptional<T extends ZodRawShape>(schema: ZodObject<T>) {
+  return schema.partial().refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided.",
+  });
 }
