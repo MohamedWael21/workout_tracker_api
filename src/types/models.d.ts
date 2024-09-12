@@ -1,25 +1,30 @@
-interface IUser {
-  fullName: string;
-  email: string;
-  password: string;
-}
+import { Types } from "mongoose";
 
-interface IWorkout {
-  name: string;
-  note?: string;
-  exercises: IExercise[];
-}
+declare global {
+  interface IUser {
+    fullName: string;
+    email: string;
+    password: string;
+  }
 
-interface IExercise {
-  name: string;
-  note?: string;
-  sets: ISet[];
-  instructions: string;
-}
+  interface IWorkout {
+    name: string;
+    note?: string;
+    exercises: IExercise[];
+    userId: Types.ObjectId;
+  }
 
-interface ISet {
-  duration?: number; // in seconds
-  reps?: number;
-  weight?: number; // in kg
-  equipment?: string;
+  interface IExercise {
+    name: string;
+    note?: string;
+    sets: ISet[];
+    instructions: string;
+  }
+
+  interface ISet {
+    duration?: number; // in seconds
+    reps?: number;
+    weight?: number; // in kg
+    equipment?: string;
+  }
 }

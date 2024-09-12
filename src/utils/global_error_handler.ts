@@ -5,7 +5,7 @@ import createHttpError from "http-errors";
 export default function (err: any, _1: Request, res: Response, _2: NextFunction) {
   if (!createHttpError.isHttpError(err)) {
     if (err.code === MONGO_DB_UNIQUE_FIELD_ERROR_CODE) err = createHttpError(422, "This Email is used");
-    else err = createHttpError.InternalServerError("Something went wrong");
+    else err = process.env.NODE_ENV === "development" ? err : createHttpError.InternalServerError("Something went wrong");
   }
   return res.status(err.statusCode).json({
     success: false,

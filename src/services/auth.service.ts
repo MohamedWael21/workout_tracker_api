@@ -32,7 +32,7 @@ export async function login({ email, password }: IUser) {
 
   const { accessToken, refreshToken } = await createTokenSet({ userId: user?.id });
 
-  return { newUser: user?.toObject(), accessToken, refreshToken };
+  return { user: user?.toObject(), accessToken, refreshToken };
 }
 
 export async function refreshToken(refreshToken: string) {

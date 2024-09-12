@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { createAccessToken, createRefreshToken } from "./jwt";
 import { ZodError, ZodObject, ZodRawShape, ZodSchema } from "zod";
 import createHttpError from "http-errors";
+import { Types } from "mongoose";
 export const catchAsyncError = (handleFunc: AsyncRequestHandler) => (req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
   Promise.resolve(handleFunc(req, res, next)).catch(next);
 };
@@ -71,10 +72,8 @@ export function setCookie(res: ExpressResponse, name: string, value: string, max
 export function createValidationError(error: ZodError) {
   const messages: { [key: string]: string }[] = [];
 
-  for (const {
-    message,
-    path: [pathName],
-  } of error.errors) {
+  for (const { message, path } of error.errors) {
+    const pathName = path[0] ?? "error";
     messages.push({ [pathName]: message });
   }
 
@@ -99,5 +98,31 @@ export function createValidationMiddleware(validationSchema: ZodSchema) {
 export function makeSchemaOptional<T extends ZodRawShape>(schema: ZodObject<T>) {
   return schema.partial().refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided.",
+  });
+}
+
+export function createIdValidationMiddleware(
+  resourceName: string,
+  isExist: (id: string) => Promise<boolean>,
+  isBelongToUser: (resourceId: string, userId: string) => Promise<boolean>,
+) {
+  return catchAsyncError(async (req, _, next) => {
+    if (!Types.ObjectId.isValid(req.params.id)) {
+      return next(createHttpError.BadRequest("Not a valid ID"));
+    }
+
+    const isDocExist = await isExist(req.params.id);
+
+    if (!isDocExist) {
+      return next(createHttpError.NotFound(`${resourceName} not found`));
+    }
+
+    const isAuthorized = await isBelongToUser(req.params.id, req.session.userId);
+
+    if (!isAuthorized) {
+      return next(createHttpError.Forbidden("You do not have access to this resource"));
+    }
+
+    next();
   });
 }

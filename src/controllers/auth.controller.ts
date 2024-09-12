@@ -9,9 +9,9 @@ export const signup = catchAsyncError(async (req, res) => {
 });
 
 export const login = catchAsyncError(async (req, res) => {
-  const { newUser, refreshToken, accessToken } = await authService.login(req.body);
+  const { user, refreshToken, accessToken } = await authService.login(req.body);
   setCookie(res, "accessToken", accessToken, ACCESS_TOKEN_COOKIE_MAX_AGE);
-  sendResponse(res, 201, { refreshToken, newUser });
+  sendResponse(res, 201, { refreshToken, user });
 });
 
 export const refreshToken = catchAsyncError(async (req, res) => {
