@@ -1,4 +1,17 @@
-# Starter template
-A starter template for express and typescript project
+# Workout Tracker Api
+
+A Api for track workout for user.
+
+## Setup
+
+make **.env** file and add the environment variables that inside **.env.example**
+
 ## How to use
-download the repo as a zip file then run **npm install**
+
+clone repo then:
+
+```javacript
+npm install
+npm run build
+npm start
+```
