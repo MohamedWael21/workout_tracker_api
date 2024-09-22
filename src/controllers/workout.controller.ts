@@ -7,9 +7,12 @@ export const createWorkout = catchAsyncError(async (req, res) => {
 });
 
 export const getWorkouts = catchAsyncError(async (req, res) => {
-  const workouts = await workoutService.getWorkouts(req.session.userId);
+  const { workouts, currentPage, totalPages, totalWorkouts, workoutsPerPage } = await workoutService.getWorkouts(
+    req.session.userId,
+    req.query as QueryString,
+  );
 
-  sendResponse(res, 200, { workouts });
+  sendResponse(res, 200, { workouts, currentPage, totalPages, totalWorkouts, workoutsPerPage });
 });
 
 export const getWorkout = catchAsyncError(async (req, res) => {

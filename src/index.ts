@@ -39,5 +39,14 @@ const shutdown = async (signal: string) => {
 
 process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
+
+process.on("uncaughtException", (err) => {
+  console.log(err);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.log(err);
+});
+
 connectToMongoose();
 connectToRedis();

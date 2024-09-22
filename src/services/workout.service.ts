@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import { Workout } from "./../models/workout.model";
+import Paginator from "../utils/paginator";
 
 export async function createWorkout(workoutData: IWorkout, userId: string) {
   const newWorkout = new Workout(workoutData);
@@ -9,9 +10,18 @@ export async function createWorkout(workoutData: IWorkout, userId: string) {
   return newWorkout;
 }
 
-export async function getWorkouts(userId: string) {
-  const workouts = await Workout.find({ userId });
-  return workouts.map((workout) => workout.toObject());
+export async function getWorkouts(userId: string, queryString: QueryString) {
+  const query = Workout.find({ userId });
+
+  const paginator = new Paginator<any>(query, queryString);
+
+  const { itemsPerPage, currentPage, totalItems, totalPages } = await paginator.paginate();
+
+  const workouts = await paginator.query;
+
+  const transformedWorkouts = workouts.map((workout) => workout.toObject());
+
+  return { workouts: transformedWorkouts, currentPage, totalWorkouts: totalItems, totalPages, workoutsPerPage: itemsPerPage };
 }
 
 export async function getWorkout(id: string) {
@@ -20,7 +30,7 @@ export async function getWorkout(id: string) {
 }
 
 export async function updateWorkout(id: string, workoutData: IWorkout) {
-  const updatedWorkout = await Workout.findByIdAndUpdate(id, workoutData, { new: true });
+  const updatedWorkout = await Workout.findByIdAndUpdate(id, workoutData, { new: true, runValidators: true });
   return updatedWorkout;
 }
 

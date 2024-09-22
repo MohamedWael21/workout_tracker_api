@@ -8,6 +8,7 @@ import createHttpError from "http-errors";
 import globalErrorHandler from "./utils/global_error_handler";
 import { catchAsyncError } from "./utils/helpers";
 import workoutRoutes from "./routes/workout.route";
+import scheduleRoutes from "./routes/schedule.route";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use("/api/v1", workoutRoutes);
+app.use("/api/v1", scheduleRoutes);
 
 app.use(
   catchAsyncError(async (req: ExpressRequest) => {

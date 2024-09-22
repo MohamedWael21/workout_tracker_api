@@ -2,3 +2,4 @@ export const JWT_ACCESS_TOKEN_EXPIRE = "1h";
 export const JWT_REFRESH_TOKEN_EXPIRE = "1y";
 export const ACCESS_TOKEN_COOKIE_MAX_AGE = 60 * 60 * 1000; // 1h
 export const MONGO_DB_UNIQUE_FIELD_ERROR_CODE = 11000;
+export const PAGINATION_LIMIT = 100;

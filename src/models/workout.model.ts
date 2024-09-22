@@ -30,7 +30,7 @@ const workoutSchema = new Schema<IWorkout>(
       ref: "User",
     },
   },
-  { toObject: { versionKey: false } },
+  { toObject: { versionKey: false }, timestamps: true },
 );
 
 export const Workout = model<IWorkout>("Workout", workoutSchema);

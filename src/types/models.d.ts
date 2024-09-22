@@ -1,4 +1,5 @@
-import { Types } from "mongoose";
+import { Document, Types } from "mongoose";
+import { ScheduleWorkoutStatus } from "./enums";
 
 declare global {
   interface IUser {
@@ -26,5 +27,22 @@ declare global {
     reps?: number;
     weight?: number; // in kg
     equipment?: string;
+  }
+
+  interface ISchedule {
+    date: ScheduleDate;
+    userId: Types.ObjectId;
+    workouts: ScheduleWorkout[];
+  }
+
+  interface ScheduleDate {
+    from: Date;
+    to: Date;
+  }
+
+  interface ScheduleWorkout {
+    workoutId: Types.ObjectId;
+    status: ScheduleWorkoutStatus;
+    note?: string;
   }
 }

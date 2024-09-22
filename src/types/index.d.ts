@@ -7,4 +7,7 @@ declare global {
   type Session = {
     userId: string;
   };
+  type QueryString = {
+    [key: string]: string;
+  };
 }
